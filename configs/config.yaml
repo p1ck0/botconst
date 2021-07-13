@@ -1,0 +1,8 @@
+http:
+  port: 5000
+  readTimeout: 10s
+  writeTimeout: 10s
+  maxHeaderMB: 20
+
+tokenManager:
+  tokenTTL: 2h
