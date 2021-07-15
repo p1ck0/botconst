@@ -25,6 +25,7 @@ const (
 
 func main() {
 	cfg, err := config.NewConfig(configPath)
+	config.Host = cfg.Host
 	if err != nil {
 		log.Fatal(err)
 	}

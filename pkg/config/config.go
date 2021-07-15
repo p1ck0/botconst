@@ -1,17 +1,22 @@
 package config
 
 import (
+	"io/ioutil"
+	"time"
+
 	"github.com/joho/godotenv"
 	"github.com/kelseyhightower/envconfig"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
-	"time"
 )
+
+var Host string
 
 type Config struct {
 	Mongo        MongoConfig
 	HTTP         HTTPConfig         `yaml:"http"`
 	TokenManager TokenManagerConfig `yaml:"tokenManager"`
+
+	Host string
 
 	Salt string
 }
@@ -59,6 +64,10 @@ func NewConfig(configPath string) (*Config, error) {
 	}
 
 	if err := envconfig.Process("hasher", &cfg); err != nil {
+		return nil, err
+	}
+
+	if err := envconfig.Process("host", &cfg); err != nil {
 		return nil, err
 	}
 

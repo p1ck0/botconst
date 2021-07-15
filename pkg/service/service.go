@@ -8,6 +8,7 @@ import (
 
 	"github.com/imroc/req"
 	"github.com/maxoov1/faq-api/pkg/auth"
+	"github.com/maxoov1/faq-api/pkg/config"
 	"github.com/maxoov1/faq-api/pkg/hash"
 	"github.com/maxoov1/faq-api/pkg/models"
 	"github.com/maxoov1/faq-api/pkg/repository"
@@ -137,9 +138,8 @@ type Message struct {
 }
 
 func setWebhooks(b models.Bot) {
-	host := "https://77cdfbea811f.ngrok.io/webhook"
 	if b.Telegram != "" {
-		WebhookURL := fmt.Sprintf("%s/%s/%s", host, "telegram", b.ID.Hex())
+		WebhookURL := fmt.Sprintf("%s/%s/%s", config.Host, "telegram", b.ID.Hex())
 		fmt.Println(WebhookURL)
 		url := fmt.Sprintf("https://api.telegram.org/bot%s/setWebhook?url=%s", b.Telegram, WebhookURL)
 		r, err := req.New().Get(url)
@@ -151,7 +151,7 @@ func setWebhooks(b models.Bot) {
 		fmt.Println(&response)
 	}
 	if b.WhatsAppToken != "" || b.WhatsAppID != "" {
-		WebhookURL := fmt.Sprintf("%s/%s/%s", host, "whatsapp", b.ID.Hex())
+		WebhookURL := fmt.Sprintf("%s/%s/%s", config.Host, "whatsapp", b.ID.Hex())
 		url := fmt.Sprintf("https://api.chat-api.com/instance%s/webhook", b.WhatsAppID)
 		r, err := req.Post(url, req.Param{"webhookUrl": WebhookURL}, req.QueryParam{
 			"token": b.WhatsAppToken,
