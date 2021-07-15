@@ -2,6 +2,12 @@ package main
 
 import (
 	"context"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/maxoov1/faq-api/pkg/auth"
 	"github.com/maxoov1/faq-api/pkg/config"
 	"github.com/maxoov1/faq-api/pkg/database/mongodb"
@@ -10,11 +16,6 @@ import (
 	"github.com/maxoov1/faq-api/pkg/repository"
 	"github.com/maxoov1/faq-api/pkg/server"
 	"github.com/maxoov1/faq-api/pkg/service"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 const (

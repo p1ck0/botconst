@@ -2,11 +2,12 @@ package service
 
 import (
 	"context"
+	"time"
+
 	"github.com/maxoov1/faq-api/pkg/auth"
 	"github.com/maxoov1/faq-api/pkg/hash"
 	"github.com/maxoov1/faq-api/pkg/models"
 	"github.com/maxoov1/faq-api/pkg/repository"
-	"time"
 )
 
 type UsersService struct {

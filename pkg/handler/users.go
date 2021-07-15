@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/maxoov1/faq-api/pkg/service"
 )
@@ -26,6 +28,7 @@ func (h *Handler) initUserRoutes(app *fiber.App) {
 func (h *Handler) userSignUp(ctx *fiber.Ctx) error {
 	var input userInputSignUp
 	if err := ctx.BodyParser(&input); err != nil {
+		fmt.Println(err)
 		return ctx.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": err.Error(),
 		})

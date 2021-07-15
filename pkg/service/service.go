@@ -2,8 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"time"
 
+	"github.com/imroc/req"
 	"github.com/maxoov1/faq-api/pkg/auth"
 	"github.com/maxoov1/faq-api/pkg/hash"
 	"github.com/maxoov1/faq-api/pkg/models"
@@ -44,7 +47,6 @@ type Bots interface {
 	GetAll(ctx context.Context, userID string) ([]models.Bot, error)
 	Delete(ctx context.Context, id string) error
 	Update(ctx context.Context, botInput BotInput) error
-	HandlerMessage(ctx context.Context, m Message, scenarios []models.Scenario)
 }
 
 type ScenariosInput struct {
@@ -62,10 +64,17 @@ type Scenarios interface {
 	Update(ctx context.Context, scenarioInput ScenariosInput) error
 }
 
+type WebHooks interface {
+	HandlerMessage(ctx context.Context, m Message) error
+	sendMessage(ctx context.Context, m Message) bool
+	getActions(ctx context.Context, botId string, text string) ([]models.Action, error)
+}
+
 type Services struct {
 	Users     Users
 	Bots      Bots
 	Scenarios Scenarios
+	WebHooks  WebHooks
 }
 
 func NewServices(r *repository.Repositories, hasher hash.Hasher, manager auth.TokenManager, tokenTTL time.Duration) *Services {
@@ -73,6 +82,7 @@ func NewServices(r *repository.Repositories, hasher hash.Hasher, manager auth.To
 		Users:     NewUsersService(r.Users, hasher, manager, tokenTTL),
 		Bots:      NewBotsService(r.Bots),
 		Scenarios: NewScenariosService(r.Scenarios),
+		WebHooks:  NewWebHookService(r.Bots, r.Scenarios),
 	}
 }
 
@@ -124,4 +134,41 @@ type Message struct {
 	ChatId   string
 	Platform string
 	Text     string
+}
+
+func setWebhooks(b models.Bot) {
+	host := "https://77cdfbea811f.ngrok.io/webhook"
+	if b.Telegram != "" {
+		WebhookURL := fmt.Sprintf("%s/%s/%s", host, "telegram", b.ID.Hex())
+		fmt.Println(WebhookURL)
+		url := fmt.Sprintf("https://api.telegram.org/bot%s/setWebhook?url=%s", b.Telegram, WebhookURL)
+		r, err := req.New().Get(url)
+		var response map[string]interface{}
+		err = r.ToJSON(&response)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(&response)
+	}
+	if b.WhatsAppToken != "" || b.WhatsAppID != "" {
+		WebhookURL := fmt.Sprintf("%s/%s/%s", host, "whatsapp", b.ID.Hex())
+		url := fmt.Sprintf("https://api.chat-api.com/instance%s/webhook", b.WhatsAppID)
+		r, err := req.Post(url, req.Param{"webhookUrl": WebhookURL}, req.QueryParam{
+			"token": b.WhatsAppToken,
+		})
+		if err != nil {
+			fmt.Println(err)
+		}
+		var response map[string]interface{}
+		err = r.ToJSON(&response)
+		if err != nil {
+			fmt.Println(err)
+		}
+		if response["set"] == true {
+			fmt.Println("Webhook set", response)
+		} else {
+			fmt.Println("Webhook not set")
+			fmt.Println(response)
+		}
+	}
 }

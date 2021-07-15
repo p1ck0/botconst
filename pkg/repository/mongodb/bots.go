@@ -3,9 +3,11 @@ package mongodb
 import (
 	"context"
 	"errors"
+
 	"github.com/maxoov1/faq-api/pkg/database/mongodb"
 	"github.com/maxoov1/faq-api/pkg/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -30,8 +32,12 @@ func (r *BotsRepo) Create(ctx context.Context, bot models.Bot) error {
 
 func (r *BotsRepo) GetByID(ctx context.Context, id string) (models.Bot, error) {
 	var bot models.Bot
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return models.Bot{}, err
+	}
 	if err := r.db.FindOne(ctx, bson.M{
-		"_id": id,
+		"_id": objID,
 	}).Decode(&bot); err != nil {
 		return models.Bot{}, err
 	}

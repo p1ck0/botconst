@@ -1,13 +1,14 @@
 package handler
 
 import (
+	"net/http"
+
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	jwtware "github.com/gofiber/jwt/v2"
 	"github.com/maxoov1/faq-api/pkg/config"
 	"github.com/maxoov1/faq-api/pkg/service"
-	"net/http"
 )
 
 type Handler struct {
@@ -27,6 +28,7 @@ func (h *Handler) Init(cfg *config.Config) http.HandlerFunc {
 		logger.New(),
 	)
 
+	h.initWebHookRoutes(app)
 	h.initUserRoutes(app)
 
 	app.Use(
