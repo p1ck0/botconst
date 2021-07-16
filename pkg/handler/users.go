@@ -18,6 +18,10 @@ type userInputSignIn struct {
 	Password string `json:"password"`
 }
 
+type Token struct {
+	Token string `json:"token"`
+}
+
 func (h *Handler) initUserRoutes(app *fiber.App) {
 	user := app.Group("/user")
 
@@ -25,6 +29,15 @@ func (h *Handler) initUserRoutes(app *fiber.App) {
 	user.Post("/sign-in", h.userSignIn)
 }
 
+// Create godoc
+// @Summary Create a account
+// @Description Create new account
+// @ID create-user
+// @Accept  json
+// @Produce  json
+// @Param user body userInputSignUp true "User Data"
+// @Success 200
+// @Router /user/sign-up [post]
 func (h *Handler) userSignUp(ctx *fiber.Ctx) error {
 	var input userInputSignUp
 	if err := ctx.BodyParser(&input); err != nil {
@@ -47,6 +60,15 @@ func (h *Handler) userSignUp(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
+// Create godoc
+// @Summary sign-in a account
+// @Description sign-in new account
+// @ID sign-in
+// @Accept  json
+// @Produce  json
+// @Param user body userInputSignIn true "User Data"
+// @Success 200 {object} Token
+// @Router /user/sign-in [post]
 func (h *Handler) userSignIn(ctx *fiber.Ctx) error {
 	var input userInputSignIn
 	if err := ctx.BodyParser(&input); err != nil {

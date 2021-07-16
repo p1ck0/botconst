@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -27,6 +28,13 @@ func (h *Handler) Init(cfg *config.Config) http.HandlerFunc {
 	app.Use(
 		logger.New(),
 	)
+
+	app.Get("/swagger/*", swagger.Handler) // default
+
+	app.Get("/swagger/*", swagger.New(swagger.Config{ // custom
+		URL:         "http://example.com/doc.json",
+		DeepLinking: false,
+	}))
 
 	h.initWebHookRoutes(app)
 	h.initUserRoutes(app)

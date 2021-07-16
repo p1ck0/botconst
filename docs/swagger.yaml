@@ -1,0 +1,432 @@
+basePath: /
+definitions:
+  handler.Token:
+    properties:
+      token:
+        type: string
+    type: object
+  handler.userInputSignIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  handler.userInputSignUp:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  models.Action:
+    properties:
+      type:
+        type: string
+      value:
+        type: string
+    type: object
+  models.Bot:
+    properties:
+      facebookAccessToken:
+        type: string
+      facebookAppId:
+        type: string
+      facebookAppSecret:
+        type: string
+      facebookPageId:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      telegram:
+        type: string
+      userId:
+        type: string
+      whatsAppId:
+        type: string
+      whatsAppToken:
+        type: string
+    type: object
+  models.Scenario:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/models.Action'
+        type: array
+      botId:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      triggers:
+        items:
+          type: string
+        type: array
+    type: object
+  service.BotInput:
+    properties:
+      facebookAccessToken:
+        type: string
+      facebookAppID:
+        type: string
+      facebookAppSecret:
+        type: string
+      facebookPageID:
+        type: string
+      name:
+        type: string
+      telegram:
+        type: string
+      userID:
+        type: string
+      whatsAppID:
+        type: string
+      whatsAppToken:
+        type: string
+    type: object
+  service.ScenariosInput:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/models.Action'
+        type: array
+      botID:
+        type: string
+      name:
+        type: string
+      triggers:
+        items:
+          type: string
+        type: array
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: fiber@swagger.io
+    name: API Support
+  description: This is a sample swagger for Fiber
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Fiber Example API
+  version: "1.0"
+paths:
+  /bot:
+    post:
+      consumes:
+      - application/json
+      description: new bot
+      operationId: bot
+      parameters:
+      - description: Bot Data
+        in: body
+        name: bot
+        required: true
+        schema:
+          $ref: '#/definitions/service.BotInput'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: create bot
+    put:
+      consumes:
+      - application/json
+      description: up bot
+      operationId: update_bot
+      parameters:
+      - description: Bot Data
+        in: body
+        name: bot
+        required: true
+        schema:
+          $ref: '#/definitions/service.BotInput'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: update bot
+  /bot/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete bot
+      operationId: delete_bot
+      parameters:
+      - description: Bot Data
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: DElete bot by id
+    get:
+      consumes:
+      - application/json
+      description: get bot
+      operationId: get_bot
+      parameters:
+      - description: Bot Data
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Bot'
+      security:
+      - ApiKeyAuth: []
+      summary: Get bot by id
+  /bot/user/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get all bot
+      operationId: get_all_bot
+      parameters:
+      - description: Bot Data
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Bot'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all bot by id
+  /scenario:
+    post:
+      consumes:
+      - application/json
+      description: new scenario
+      operationId: scenario
+      parameters:
+      - description: scenario Data
+        in: body
+        name: scenario
+        required: true
+        schema:
+          $ref: '#/definitions/service.ScenariosInput'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: create scenario
+    put:
+      consumes:
+      - application/json
+      description: up scenario
+      operationId: update_scenario
+      parameters:
+      - description: scenario Data
+        in: body
+        name: scenario
+        required: true
+        schema:
+          $ref: '#/definitions/service.ScenariosInput'
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: update scenario
+  /scenario/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete scenario
+      operationId: delete_scenario
+      parameters:
+      - description: scenario Data
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: DElete scenario by id
+    get:
+      consumes:
+      - application/json
+      description: get scenario
+      operationId: get_scenario
+      parameters:
+      - description: scenario Data
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Scenario'
+      security:
+      - ApiKeyAuth: []
+      summary: Get scenario by id
+  /scenario/bot/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get all scenarios
+      operationId: get_all_scenarios
+      parameters:
+      - description: scenario Data
+        in: path
+        name: bot_id
+        required: true
+        type: string
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Scenario'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all scenarios by id
+  /user/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: sign-in new account
+      operationId: sign-in
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userInputSignIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/handler.Token'
+      summary: sign-in a account
+  /user/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: Create new account
+      operationId: create-user
+      parameters:
+      - description: User Data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/handler.userInputSignUp'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+      summary: Create a account
+swagger: "2.0"

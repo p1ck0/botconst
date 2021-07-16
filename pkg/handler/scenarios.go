@@ -15,6 +15,17 @@ func (h *Handler) initScenariosRoutes(app *fiber.App) {
 	scenario.Put("/", h.scenarioUpdate)
 }
 
+// Create godoc
+// @Summary create scenario
+// @Description  new scenario
+// @ID scenario
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Security ApiKeyAuth
+// @Param scenario  body service.ScenariosInput true "scenario Data"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Router /scenario [post]
 func (h *Handler) scenarioCreate(ctx *fiber.Ctx) error {
 	var scenario service.ScenariosInput
 	if err := ctx.BodyParser(&scenario); err != nil {
@@ -28,6 +39,17 @@ func (h *Handler) scenarioCreate(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
+// Create godoc
+// @Summary Get scenario by id
+// @Description  get scenario
+// @ID get_scenario
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} models.Scenario
+// @Security ApiKeyAuth
+// @Param id path string true "scenario Data"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Router /scenario/{id} [get]
 func (h *Handler) scenarioGetByID(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
@@ -41,6 +63,17 @@ func (h *Handler) scenarioGetByID(ctx *fiber.Ctx) error {
 	})
 }
 
+// Create godoc
+// @Summary Get all scenarios by id
+// @Description  get all scenarios
+// @ID get_all_scenarios
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} []models.Scenario
+// @Security ApiKeyAuth
+// @Param bot_id path string true "scenario Data"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Router /scenario/bot/{id} [get]
 func (h *Handler) scenarioGetAll(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
@@ -54,6 +87,17 @@ func (h *Handler) scenarioGetAll(ctx *fiber.Ctx) error {
 	})
 }
 
+// Create godoc
+// @Summary DElete scenario by id
+// @Description  delete scenario
+// @ID delete_scenario
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Security ApiKeyAuth
+// @Param id path string true "scenario Data"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Router /scenario/{id} [delete]
 func (h *Handler) scenarioDelete(ctx *fiber.Ctx) error {
 	id := ctx.Params("id")
 
@@ -64,6 +108,17 @@ func (h *Handler) scenarioDelete(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
+// Create godoc
+// @Summary update scenario
+// @Description  up scenario
+// @ID update_scenario
+// @Accept  json
+// @Produce  json
+// @Success 200
+// @Security ApiKeyAuth
+// @Param scenario body service.ScenariosInput true "scenario Data"
+// @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
+// @Router /scenario [put]
 func (h *Handler) scenarioUpdate(ctx *fiber.Ctx) error {
 	var scenario service.ScenariosInput
 	if err := ctx.BodyParser(&scenario); err != nil {
