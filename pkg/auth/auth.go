@@ -57,7 +57,6 @@ func (m *Manager) Parse(accessToken string) (string, error) {
 }
 
 func ParseToken(c *fiber.Ctx) string {
-	fmt.Println(c.Locals("user"))
 	user := c.Locals("user").(*jwt.Token)
 	claims := user.Claims.(jwt.MapClaims)
 	fmt.Println(claims)
