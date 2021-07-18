@@ -31,7 +31,7 @@ type Users interface {
 }
 
 type BotInput struct {
-	UserID              string
+	UserID              string `json:"-"`
 	Name                string
 	Telegram            string
 	WhatsAppID          string
@@ -54,7 +54,7 @@ type ScenariosInput struct {
 	BotID    string
 	Name     string
 	Triggers []string
-	Actions  []models.Action
+	Dialogs  []models.Dialog
 }
 
 type Scenarios interface {
@@ -68,7 +68,9 @@ type Scenarios interface {
 type WebHooks interface {
 	HandlerMessage(ctx context.Context, m Message) error
 	sendMessage(ctx context.Context, m Message) bool
-	getActions(ctx context.Context, botId string, text string) ([]models.Action, error)
+	getActions(ctx context.Context, m Message, botUser models.BotUser) ([]models.Action, error)
+	getRedirectActions(ctx context.Context, m Message, botUser models.BotUser, id string) ([]models.Action, error)
+	actionIter(ctx context.Context, actions []models.Action, m Message, botUser models.BotUser) error
 }
 
 type Services struct {
@@ -83,7 +85,7 @@ func NewServices(r *repository.Repositories, hasher hash.Hasher, manager auth.To
 		Users:     NewUsersService(r.Users, hasher, manager, tokenTTL),
 		Bots:      NewBotsService(r.Bots),
 		Scenarios: NewScenariosService(r.Scenarios),
-		WebHooks:  NewWebHookService(r.Bots, r.Scenarios),
+		WebHooks:  NewWebHookService(r.Bots, r.Scenarios, r.BotUser),
 	}
 }
 

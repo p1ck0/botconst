@@ -51,14 +51,25 @@ definitions:
       whatsAppToken:
         type: string
     type: object
-  models.Scenario:
+  models.Dialog:
     properties:
       actions:
         items:
           $ref: '#/definitions/models.Action'
         type: array
+      isMain:
+        type: boolean
+      trigger:
+        type: string
+    type: object
+  models.Scenario:
+    properties:
       botId:
         type: string
+      fialogs:
+        items:
+          $ref: '#/definitions/models.Dialog'
+        type: array
       id:
         type: string
       name:
@@ -82,8 +93,6 @@ definitions:
         type: string
       telegram:
         type: string
-      userID:
-        type: string
       whatsAppID:
         type: string
       whatsAppToken:
@@ -91,12 +100,12 @@ definitions:
     type: object
   service.ScenariosInput:
     properties:
-      actions:
-        items:
-          $ref: '#/definitions/models.Action'
-        type: array
       botID:
         type: string
+      dialogs:
+        items:
+          $ref: '#/definitions/models.Dialog'
+        type: array
       name:
         type: string
       triggers:
@@ -118,6 +127,30 @@ info:
   version: "1.0"
 paths:
   /bot:
+    get:
+      consumes:
+      - application/json
+      description: get all bot
+      operationId: get_all_bot
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Bot'
+            type: array
+      security:
+      - ApiKeyAuth: []
+      summary: Get all bot by id
     post:
       consumes:
       - application/json
@@ -202,11 +235,6 @@ paths:
       description: get bot
       operationId: get_bot
       parameters:
-      - description: Bot Data
-        in: path
-        name: id
-        required: true
-        type: string
       - default: Bearer <Add access token here>
         description: Insert your access token
         in: header
@@ -223,36 +251,6 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: Get bot by id
-  /bot/user/{id}:
-    get:
-      consumes:
-      - application/json
-      description: get all bot
-      operationId: get_all_bot
-      parameters:
-      - description: Bot Data
-        in: path
-        name: user_id
-        required: true
-        type: string
-      - default: Bearer <Add access token here>
-        description: Insert your access token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Bot'
-            type: array
-      security:
-      - ApiKeyAuth: []
-      summary: Get all bot by id
   /scenario:
     post:
       consumes:

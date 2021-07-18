@@ -7,6 +7,7 @@ import (
 	"github.com/maxoov1/faq-api/pkg/database/mongodb"
 	"github.com/maxoov1/faq-api/pkg/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -31,8 +32,12 @@ func (r *ScenariosRepo) Create(ctx context.Context, scenario models.Scenario) er
 
 func (r *ScenariosRepo) GetByID(ctx context.Context, id string) (models.Scenario, error) {
 	var scenario models.Scenario
+	idObj, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return models.Scenario{}, err
+	}
 	if err := r.db.FindOne(ctx, bson.M{
-		"_id": id,
+		"_id": idObj,
 	}).Decode(&scenario); err != nil {
 		return models.Scenario{}, err
 	}
@@ -75,8 +80,8 @@ func (r *ScenariosRepo) Update(ctx context.Context, scenario models.Scenario) er
 		query["triggers"] = scenario.Triggers
 	}
 
-	if len(scenario.Actions) != 0 {
-		query["actions"] = scenario.Actions
+	if len(scenario.Dialogs) != 0 {
+		query["actions"] = scenario.Dialogs
 	}
 
 	_, err := r.db.UpdateOne(ctx, bson.M{

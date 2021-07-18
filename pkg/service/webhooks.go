@@ -15,30 +15,49 @@ import (
 type WebHookService struct {
 	repoBots      repository.Bots
 	repoScenarios repository.Scenarios
+	repoBotUser   repository.BotUser
 }
 
-func NewWebHookService(repoBots repository.Bots, repoScenarios repository.Scenarios) *WebHookService {
+func NewWebHookService(repoBots repository.Bots, repoScenarios repository.Scenarios, repoBotUser repository.BotUser) *WebHookService {
 	return &WebHookService{
 		repoBots:      repoBots,
 		repoScenarios: repoScenarios,
+		repoBotUser:   repoBotUser,
 	}
 }
 
 func (s *WebHookService) HandlerMessage(ctx context.Context, m Message) error {
-	actions, err := s.getActions(ctx, m.BotId, m.Text)
+	botUser, err := s.repoBotUser.GetByID(ctx, m.ChatId, m.BotId, m.Platform)
 	if err != nil {
 		return err
 	}
+	actions, err := s.getActions(ctx, m, botUser)
+	if err != nil {
+		return err
+	}
+	return s.actionIter(ctx, actions, m, botUser)
+}
+
+func (s *WebHookService) actionIter(ctx context.Context, actions []models.Action, m Message, botUser models.BotUser) error {
 	for _, action := range actions {
-		fmt.Println(action.Type)
-		if action.Type == "text" {
-			fmt.Println(action.Value)
+		switch action.Type {
+		case "text":
 			s.sendMessage(ctx, Message{
 				BotId:    m.BotId,
 				ChatId:   m.ChatId,
 				Platform: m.Platform,
 				Text:     action.Value,
 			})
+		case "redirect":
+			botUser.State = ""
+			if err := s.repoBotUser.Update(ctx, botUser); err != nil {
+				return err
+			}
+			actions, err := s.getRedirectActions(ctx, m, botUser, action.Value)
+			if err != nil {
+				return err
+			}
+			s.actionIter(ctx, actions, m, botUser)
 		}
 	}
 	return nil
@@ -51,7 +70,6 @@ func (s *WebHookService) sendMessage(ctx context.Context, m Message) bool {
 		return false
 	}
 	var sent bool
-	fmt.Println("d", m.Platform)
 	if m.Platform == "facebook" {
 		messenger := &messenger.Messenger{
 			AccessToken: bot.FacebookAccessToken,
@@ -89,20 +107,47 @@ func (s *WebHookService) sendMessage(ctx context.Context, m Message) bool {
 	return sent
 }
 
-func (s *WebHookService) getActions(ctx context.Context, botId string, text string) ([]models.Action, error) {
-	scenarios, err := s.repoScenarios.GetAll(ctx, botId)
+func (s *WebHookService) getActions(ctx context.Context, m Message, botUser models.BotUser) ([]models.Action, error) {
+	var sent bool
+	actions := []models.Action{}
+	scenarios, err := s.repoScenarios.GetAll(ctx, m.BotId)
 	if err != nil {
 		fmt.Println(err)
 		return []models.Action{}, err
 	}
-	var sent bool
-	actions := []models.Action{}
-	for _, s := range scenarios {
-		for _, trigger := range s.Triggers {
-			if trigger == text {
-				for _, action := range s.Actions {
-					actions = append(actions, action)
-					sent = true
+	for _, scenario := range scenarios {
+		for _, trigger := range scenario.Triggers {
+			if trigger == m.Text && botUser.State == "" {
+				if err := s.repoBotUser.Create(ctx, models.BotUser{
+					BotId:     m.BotId,
+					BotUserId: m.ChatId,
+					Platform:  m.Platform,
+					State:     scenario.ID.Hex(),
+				}); err != nil {
+					err := s.repoBotUser.Update(ctx, models.BotUser{
+						BotId:     m.BotId,
+						BotUserId: m.ChatId,
+						Platform:  m.Platform,
+						State:     scenario.ID.Hex(),
+					})
+					return []models.Action{}, err
+				}
+				for _, dialog := range scenario.Dialogs {
+					if dialog.IsMain {
+						for _, action := range dialog.Actions {
+							actions = append(actions, action)
+							sent = true
+						}
+					}
+				}
+			} else if scenario.ID.Hex() == botUser.State {
+				for _, dialog := range scenario.Dialogs {
+					if dialog.Trigger == m.Text && !dialog.IsMain {
+						for _, action := range dialog.Actions {
+							actions = append(actions, action)
+							sent = true
+						}
+					}
 				}
 			}
 		}
@@ -115,5 +160,48 @@ func (s *WebHookService) getActions(ctx context.Context, botId string, text stri
 		})
 	}
 
+	return actions, nil
+}
+
+func (s *WebHookService) getRedirectActions(ctx context.Context, m Message, botUser models.BotUser, id string) ([]models.Action, error) {
+	actions := []models.Action{}
+	scenario, err := s.repoScenarios.GetByID(ctx, id)
+	if err != nil {
+		fmt.Println(err)
+		return []models.Action{}, err
+	}
+	for _, trigger := range scenario.Triggers {
+		if trigger == m.Text && botUser.State == "" {
+			if err := s.repoBotUser.Create(ctx, models.BotUser{
+				BotId:     m.BotId,
+				BotUserId: m.ChatId,
+				Platform:  m.Platform,
+				State:     scenario.ID.Hex(),
+			}); err != nil {
+				err := s.repoBotUser.Update(ctx, models.BotUser{
+					BotId:     m.BotId,
+					BotUserId: m.ChatId,
+					Platform:  m.Platform,
+					State:     scenario.ID.Hex(),
+				})
+				return []models.Action{}, err
+			}
+			for _, dialog := range scenario.Dialogs {
+				if dialog.IsMain {
+					for _, action := range dialog.Actions {
+						actions = append(actions, action)
+					}
+				}
+			}
+		} else if scenario.ID.Hex() == botUser.State {
+			for _, dialog := range scenario.Dialogs {
+				if dialog.Trigger == m.Text && !dialog.IsMain {
+					for _, action := range dialog.Actions {
+						actions = append(actions, action)
+					}
+				}
+			}
+		}
+	}
 	return actions, nil
 }

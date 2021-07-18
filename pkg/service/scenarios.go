@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+
 	"github.com/maxoov1/faq-api/pkg/models"
 	"github.com/maxoov1/faq-api/pkg/repository"
 )
@@ -19,7 +20,7 @@ func (s *ScenariosService) Create(ctx context.Context, scenarioInput ScenariosIn
 		BotID:    scenarioInput.BotID,
 		Name:     scenarioInput.Name,
 		Triggers: scenarioInput.Triggers,
-		Actions:  scenarioInput.Actions,
+		Dialogs:  scenarioInput.Dialogs,
 	}
 
 	return s.repo.Create(ctx, scenario)
@@ -42,7 +43,7 @@ func (s *ScenariosService) Update(ctx context.Context, scenarioInput ScenariosIn
 		BotID:    scenarioInput.BotID,
 		Name:     scenarioInput.Name,
 		Triggers: scenarioInput.Triggers,
-		Actions:  scenarioInput.Actions,
+		Dialogs:  scenarioInput.Dialogs,
 	}
 
 	return s.repo.Update(ctx, scenario)

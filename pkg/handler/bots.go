@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/maxoov1/faq-api/pkg/auth"
 	"github.com/maxoov1/faq-api/pkg/service"
 )
 
@@ -10,7 +11,7 @@ func (h *Handler) initBotsRoutes(app *fiber.App) {
 
 	bot.Post("/", h.botCreate)
 	bot.Get("/:id", h.botGetByID)
-	bot.Get("/user/:id", h.botGetAll)
+	bot.Get("/", h.botGetAll)
 	bot.Delete("/:id", h.botDelete)
 	bot.Put("/", h.botUpdate)
 }
@@ -31,6 +32,7 @@ func (h *Handler) botCreate(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&bot); err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
+	bot.UserID = auth.ParseToken(ctx)
 
 	if err := h.service.Bots.Create(ctx.Context(), bot); err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)
@@ -47,7 +49,6 @@ func (h *Handler) botCreate(ctx *fiber.Ctx) error {
 // @Produce  json
 // @Success 200 {object} models.Bot
 // @Security ApiKeyAuth
-// @Param id path string true "Bot Data"
 // @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
 // @Router /bot/{id} [get]
 func (h *Handler) botGetByID(ctx *fiber.Ctx) error {
@@ -71,11 +72,10 @@ func (h *Handler) botGetByID(ctx *fiber.Ctx) error {
 // @Produce  json
 // @Success 200 {object} []models.Bot
 // @Security ApiKeyAuth
-// @Param user_id path string true "Bot Data"
 // @Param Authorization header string true "Insert your access token" default(Bearer <Add access token here>)
-// @Router /bot/user/{id} [get]
+// @Router /bot [get]
 func (h *Handler) botGetAll(ctx *fiber.Ctx) error {
-	id := ctx.Params("id")
+	id := auth.ParseToken(ctx)
 
 	bots, err := h.service.Bots.GetAll(ctx.Context(), id)
 	if err != nil {

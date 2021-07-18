@@ -33,6 +33,43 @@ var doc = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/bot": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "get all bot",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get all bot by id",
+                "operationId": "get_all_bot",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003cAdd access token here\u003e",
+                        "description": "Insert your access token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Bot"
+                            }
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -114,52 +151,6 @@ var doc = `{
                 }
             }
         },
-        "/bot/user/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "ApiKeyAuth": []
-                    }
-                ],
-                "description": "get all bot",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "Get all bot by id",
-                "operationId": "get_all_bot",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bot Data",
-                        "name": "user_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "Bearer \u003cAdd access token here\u003e",
-                        "description": "Insert your access token",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Bot"
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/bot/{id}": {
             "get": {
                 "security": [
@@ -177,13 +168,6 @@ var doc = `{
                 "summary": "Get bot by id",
                 "operationId": "get_bot",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bot Data",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "default": "Bearer \u003cAdd access token here\u003e",
@@ -592,7 +576,7 @@ var doc = `{
                 }
             }
         },
-        "models.Scenario": {
+        "models.Dialog": {
             "type": "object",
             "properties": {
                 "actions": {
@@ -601,8 +585,25 @@ var doc = `{
                         "$ref": "#/definitions/models.Action"
                     }
                 },
+                "isMain": {
+                    "type": "boolean"
+                },
+                "trigger": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Scenario": {
+            "type": "object",
+            "properties": {
                 "botId": {
                     "type": "string"
+                },
+                "fialogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Dialog"
+                    }
                 },
                 "id": {
                     "type": "string"
@@ -639,9 +640,6 @@ var doc = `{
                 "telegram": {
                     "type": "string"
                 },
-                "userID": {
-                    "type": "string"
-                },
                 "whatsAppID": {
                     "type": "string"
                 },
@@ -653,14 +651,14 @@ var doc = `{
         "service.ScenariosInput": {
             "type": "object",
             "properties": {
-                "actions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Action"
-                    }
-                },
                 "botID": {
                     "type": "string"
+                },
+                "dialogs": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Dialog"
+                    }
                 },
                 "name": {
                     "type": "string"

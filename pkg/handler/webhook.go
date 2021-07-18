@@ -29,7 +29,6 @@ func (h *Handler) testHub(ctx *fiber.Ctx) error {
 }
 
 func (h *Handler) handlerMessage(ctx *fiber.Ctx) error {
-	fmt.Println("GET!")
 	botId := ctx.Params("bot_id")
 	platform := ctx.Params("platform")
 	switch platform {

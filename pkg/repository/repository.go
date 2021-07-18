@@ -29,10 +29,17 @@ type Scenarios interface {
 	Update(ctx context.Context, scenario models.Scenario) error
 }
 
+type BotUser interface {
+	Create(ctx context.Context, botUser models.BotUser) error
+	GetByID(ctx context.Context, iduser, idbot, platform string) (models.BotUser, error)
+	Update(ctx context.Context, botUser models.BotUser) error
+}
+
 type Repositories struct {
 	Users     Users
 	Bots      Bots
 	Scenarios Scenarios
+	BotUser   BotUser
 }
 
 func NewRepositories(db *mongo.Database) *Repositories {
@@ -40,5 +47,6 @@ func NewRepositories(db *mongo.Database) *Repositories {
 		Users:     mongodb.NewUsersRepo(db),
 		Bots:      mongodb.NewBotsRepo(db),
 		Scenarios: mongodb.NewScenariosRepo(db),
+		BotUser:   mongodb.NewBotUserRepo(db),
 	}
 }

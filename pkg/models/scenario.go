@@ -7,5 +7,5 @@ type Scenario struct {
 	BotID    string             `json:"botId" bson:"botId"`
 	Name     string             `json:"name" bson:"name"`
 	Triggers []string           `json:"triggers" bson:"triggers,omitempty"`
-	Actions  []Action           `json:"actions" bson:"actions,omitempty"`
+	Dialogs  []Dialog           `json:"fialogs" bson:"dialogs,omitempty"`
 }
