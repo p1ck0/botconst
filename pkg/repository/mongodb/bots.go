@@ -76,12 +76,36 @@ func (r *BotsRepo) Delete(ctx context.Context, id string) error {
 func (r *BotsRepo) Update(ctx context.Context, bot models.Bot) error {
 	query := bson.M{}
 
-	if bot.UserID != "" {
-		query["userId"] = bot.UserID
-	}
-
 	if bot.Name != "" {
 		query["name"] = bot.Name
+	}
+
+	if bot.FacebookAccessToken != "" {
+		query["facebookAccessToken"] = bot.FacebookAccessToken
+	}
+
+	if bot.Telegram != "" {
+		query["telegram"] = bot.Telegram
+	}
+
+	if bot.FacebookAppID != "" {
+		query["facebookAppID"] = bot.FacebookAppID
+	}
+
+	if bot.FacebookAppSecret != "" {
+		query["facebookAppSecret"] = bot.FacebookAppSecret
+	}
+
+	if bot.FacebookPageID != "" {
+		query["facebookPageID"] = bot.FacebookPageID
+	}
+
+	if bot.WhatsAppID != "" {
+		query["whatsAppID"] = bot.WhatsAppID
+	}
+
+	if bot.WhatsAppToken != "" {
+		query["whatsAppToken"] = bot.WhatsAppToken
 	}
 
 	_, err := r.db.UpdateOne(ctx, bson.M{

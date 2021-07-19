@@ -85,7 +85,7 @@ func (r *ScenariosRepo) Update(ctx context.Context, scenario models.Scenario) er
 	}
 
 	if len(scenario.Dialogs) != 0 {
-		query["actions"] = scenario.Dialogs
+		query["dialogs"] = scenario.Dialogs
 	}
 
 	_, err := r.db.UpdateOne(ctx, bson.M{
