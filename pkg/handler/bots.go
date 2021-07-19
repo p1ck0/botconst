@@ -124,6 +124,7 @@ func (h *Handler) botUpdate(ctx *fiber.Ctx) error {
 	if err := ctx.BodyParser(&bot); err != nil {
 		return ctx.SendStatus(fiber.StatusBadRequest)
 	}
+	bot.UserID = auth.ParseToken(ctx)
 
 	if err := h.service.Bots.Update(ctx.Context(), bot); err != nil {
 		return ctx.SendStatus(fiber.StatusInternalServerError)

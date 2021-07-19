@@ -622,6 +622,9 @@ var doc = `{
         "service.BotInput": {
             "type": "object",
             "properties": {
+                "botID": {
+                    "type": "string"
+                },
                 "facebookAccessToken": {
                     "type": "string"
                 },
@@ -659,6 +662,9 @@ var doc = `{
                     "items": {
                         "$ref": "#/definitions/models.Dialog"
                     }
+                },
+                "id": {
+                    "type": "string"
                 },
                 "name": {
                     "type": "string"

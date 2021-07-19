@@ -31,7 +31,8 @@ type Users interface {
 }
 
 type BotInput struct {
-	UserID              string
+	BotID               string
+	UserID              string `json:"-"`
 	Name                string
 	Telegram            string
 	WhatsAppID          string

@@ -50,7 +50,12 @@ func (s *BotsService) Delete(ctx context.Context, id string) error {
 }
 
 func (s *BotsService) Update(ctx context.Context, botInput BotInput) error {
+	idObj, err := primitive.ObjectIDFromHex(botInput.BotID)
+	if err != nil {
+		return err
+	}
 	bot := models.Bot{
+		ID:                  idObj,
 		UserID:              botInput.UserID,
 		Name:                botInput.Name,
 		Telegram:            botInput.Telegram,
