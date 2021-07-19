@@ -5,6 +5,7 @@ import (
 
 	"github.com/maxoov1/faq-api/pkg/models"
 	"github.com/maxoov1/faq-api/pkg/repository"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type ScenariosService struct {
@@ -39,7 +40,12 @@ func (s *ScenariosService) Delete(ctx context.Context, id string) error {
 }
 
 func (s *ScenariosService) Update(ctx context.Context, scenarioInput ScenariosInput) error {
+	idObj, err := primitive.ObjectIDFromHex(scenarioInput.ID)
+	if err != nil {
+		return err
+	}
 	scenario := models.Scenario{
+		ID:       idObj,
 		BotID:    scenarioInput.BotID,
 		Name:     scenarioInput.Name,
 		Triggers: scenarioInput.Triggers,

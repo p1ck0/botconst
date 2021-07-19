@@ -3,7 +3,6 @@ package mongodb
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"github.com/maxoov1/faq-api/pkg/database/mongodb"
 	"github.com/maxoov1/faq-api/pkg/models"
@@ -47,7 +46,6 @@ func (r *BotsRepo) GetByID(ctx context.Context, id string) (models.Bot, error) {
 }
 
 func (r *BotsRepo) GetAll(ctx context.Context, userID string) ([]models.Bot, error) {
-	fmt.Println(userID)
 	cursor, err := r.db.Find(ctx, bson.M{
 		"userId": userID,
 	})
@@ -64,8 +62,12 @@ func (r *BotsRepo) GetAll(ctx context.Context, userID string) ([]models.Bot, err
 }
 
 func (r *BotsRepo) Delete(ctx context.Context, id string) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{
-		"_id": id,
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.DeleteOne(ctx, bson.M{
+		"_id": objID,
 	})
 
 	return err

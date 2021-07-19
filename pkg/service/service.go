@@ -31,7 +31,7 @@ type Users interface {
 }
 
 type BotInput struct {
-	UserID              string `json:"-"`
+	UserID              string
 	Name                string
 	Telegram            string
 	WhatsAppID          string
@@ -51,6 +51,7 @@ type Bots interface {
 }
 
 type ScenariosInput struct {
+	ID       string
 	BotID    string
 	Name     string
 	Triggers []string

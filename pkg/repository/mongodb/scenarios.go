@@ -62,8 +62,12 @@ func (r *ScenariosRepo) GetAll(ctx context.Context, botID string) ([]models.Scen
 }
 
 func (r *ScenariosRepo) Delete(ctx context.Context, id string) error {
-	_, err := r.db.DeleteOne(ctx, bson.M{
-		"_id": id,
+	idObj, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	_, err = r.db.DeleteOne(ctx, bson.M{
+		"_id": idObj,
 	})
 
 	return err
