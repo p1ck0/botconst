@@ -89,7 +89,7 @@ func (r *BotsRepo) Update(ctx context.Context, bot models.Bot) error {
 	}
 
 	if bot.FacebookAppID != "" {
-		query["facebookAppID"] = bot.FacebookAppID
+		query["facebookAppId"] = bot.FacebookAppID
 	}
 
 	if bot.FacebookAppSecret != "" {
@@ -97,11 +97,11 @@ func (r *BotsRepo) Update(ctx context.Context, bot models.Bot) error {
 	}
 
 	if bot.FacebookPageID != "" {
-		query["facebookPageID"] = bot.FacebookPageID
+		query["facebookPageId"] = bot.FacebookPageID
 	}
 
 	if bot.WhatsAppID != "" {
-		query["whatsAppID"] = bot.WhatsAppID
+		query["whatsAppId"] = bot.WhatsAppID
 	}
 
 	if bot.WhatsAppToken != "" {
