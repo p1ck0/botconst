@@ -6,6 +6,7 @@ import (
 	swagger "github.com/arsmn/fiber-swagger/v2"
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	jwtware "github.com/gofiber/jwt/v2"
 	"github.com/maxoov1/faq-api/pkg/config"
@@ -28,6 +29,8 @@ func (h *Handler) Init(cfg *config.Config) http.HandlerFunc {
 	app.Use(
 		logger.New(),
 	)
+
+	app.Use(cors.New())
 
 	app.Get("/swagger/*", swagger.Handler) // default
 
